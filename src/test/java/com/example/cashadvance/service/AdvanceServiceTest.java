@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -140,5 +141,28 @@ class AdvanceServiceTest {
             service.returnCash(1L, 2000.0, 2L)
         );
         assertEquals("Monthly limit not found", ex.getMessage());
+    }
+
+    @Test
+    void testAutoDeductHappyPath() {
+        MonthlyLimitRepository limitRepo = Mockito.mock(MonthlyLimitRepository.class);
+        AutoDeductionScheduler scheduler = new AutoDeductionScheduler(limitRepo);
+
+        MonthlyLimit limit1 = MonthlyLimit.builder()
+            .user(User.builder().id(1L).username("user1").build())
+            .remainingLimit(500.0)
+            .build();
+
+        MonthlyLimit limit2 = MonthlyLimit.builder()
+            .user(User.builder().id(2L).username("user2").build())
+            .remainingLimit(50.0)
+            .build();
+
+        Mockito.when(limitRepo.findAll()).thenReturn(List.of(limit1, limit2));
+
+        scheduler.autoDeduct();
+
+        Mockito.verify(limitRepo).save(limit1);
+        Mockito.verify(limitRepo, Mockito.never()).save(limit2);
     }
 }
