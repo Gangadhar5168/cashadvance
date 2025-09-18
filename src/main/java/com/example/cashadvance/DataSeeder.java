@@ -15,13 +15,47 @@ public class DataSeeder {
     @Bean
     CommandLineRunner seedData(RoleRepository roleRepo, UserRepository userRepo, PasswordEncoder encoder) {
         return args -> {
-            Role admin = roleRepo.save(new Role(null, "ADMIN"));
-            Role manager = roleRepo.save(new Role(null, "MANAGER"));
-            Role supervisor = roleRepo.save(new Role(null, "SUPERVISOR"));
+            Role admin = roleRepo.findByName("ADMIN").orElseGet(() -> roleRepo.save(Role.builder().name("ADMIN").build()));
+            Role manager = roleRepo.findByName("MANAGER").orElseGet(() -> roleRepo.save(Role.builder().name("MANAGER").build()));
+            Role supervisor = roleRepo.findByName("SUPERVISOR").orElseGet(() -> roleRepo.save(Role.builder().name("SUPERVISOR").build()));
+            Role employeeRole = roleRepo.findByName("EMPLOYEE").orElseGet(() -> roleRepo.save(Role.builder().name("EMPLOYEE").build()));
 
-            userRepo.save(new User(null, "admin", encoder.encode("admin123"), 100000.0, 5000.0, Set.of(admin)));
-            userRepo.save(new User(null, "manager", encoder.encode("manager123"), 80000.0, 4000.0, Set.of(manager)));
-            userRepo.save(new User(null, "supervisor", encoder.encode("supervisor123"), 60000.0, 3000.0, Set.of(supervisor)));
+            if (userRepo.findByUsername("admin").isEmpty()) {
+                userRepo.save(User.builder()
+                    .username("admin")
+                    .password(encoder.encode("admin123"))
+                    .salary(100000.0)
+                    .allowance(5000.0)
+                    .roles(Set.of(admin))
+                    .build());
+            }
+            if (userRepo.findByUsername("manager").isEmpty()) {
+                userRepo.save(User.builder()
+                    .username("manager")
+                    .password(encoder.encode("manager123"))
+                    .salary(80000.0)
+                    .allowance(4000.0)
+                    .roles(Set.of(manager))
+                    .build());
+            }
+            if (userRepo.findByUsername("supervisor").isEmpty()) {
+                userRepo.save(User.builder()
+                    .username("supervisor")
+                    .password(encoder.encode("supervisor123"))
+                    .salary(60000.0)
+                    .allowance(3000.0)
+                    .roles(Set.of(supervisor))
+                    .build());
+            }
+            if (userRepo.findByUsername("employee1").isEmpty()) {
+                userRepo.save(User.builder()
+                    .username("employee1")
+                    .password(encoder.encode("employee123"))
+                    .salary(40000.0)
+                    .allowance(2000.0)
+                    .roles(Set.of(employeeRole))
+                    .build());
+            }
         };
     }
 }

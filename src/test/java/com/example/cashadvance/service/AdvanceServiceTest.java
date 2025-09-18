@@ -79,4 +79,66 @@ class AdvanceServiceTest {
         );
         assertEquals("Advance amount exceeds remaining limit", ex.getMessage());
     }
+
+    @Test
+    void testReturnCashHappyPath() {
+        MonthlyLimitRepository limitRepo = Mockito.mock(MonthlyLimitRepository.class);
+        AdvanceTransactionRepository txRepo = Mockito.mock(AdvanceTransactionRepository.class);
+        UserRepository userRepo = Mockito.mock(UserRepository.class);
+
+        AdvanceService service = new AdvanceService(limitRepo, txRepo, userRepo);
+
+        User user = User.builder().id(1L).username("employee").build();
+        User supervisor = User.builder().id(2L).username("supervisor").build();
+        String monthYear = LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM"));
+        MonthlyLimit limit = MonthlyLimit.builder()
+            .user(user)
+            .monthYear(monthYear)
+            .originalLimit(10000.0)
+            .remainingLimit(5000.0)
+            .carriedDebt(0.0)
+            .build();
+
+        Mockito.when(userRepo.findById(1L)).thenReturn(Optional.of(user));
+        Mockito.when(userRepo.findById(2L)).thenReturn(Optional.of(supervisor));
+        Mockito.when(limitRepo.findByUserAndMonthYear(user, monthYear)).thenReturn(Optional.of(limit));
+        Mockito.when(limitRepo.save(Mockito.any())).thenReturn(limit);
+
+        AdvanceTransaction tx = AdvanceTransaction.builder()
+            .user(user)
+            .amount(2000.0)
+            .type(AdvanceTransaction.TransactionType.RETURN)
+            .approvedBy(supervisor)
+            .timestamp(LocalDateTime.now())
+            .build();
+
+        Mockito.when(txRepo.save(Mockito.any())).thenReturn(tx);
+
+        AdvanceTransaction result = service.returnCash(1L, 2000.0, 2L);
+
+        assertEquals(2000.0, result.getAmount());
+        assertEquals(7000.0, limit.getRemainingLimit());
+    }
+
+    @Test
+    void testReturnCashLimitNotFound() {
+        MonthlyLimitRepository limitRepo = Mockito.mock(MonthlyLimitRepository.class);
+        AdvanceTransactionRepository txRepo = Mockito.mock(AdvanceTransactionRepository.class);
+        UserRepository userRepo = Mockito.mock(UserRepository.class);
+
+        AdvanceService service = new AdvanceService(limitRepo, txRepo, userRepo);
+
+        User user = User.builder().id(1L).username("employee").build();
+        User supervisor = User.builder().id(2L).username("supervisor").build();
+        String monthYear = LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM"));
+
+        Mockito.when(userRepo.findById(1L)).thenReturn(Optional.of(user));
+        Mockito.when(userRepo.findById(2L)).thenReturn(Optional.of(supervisor));
+        Mockito.when(limitRepo.findByUserAndMonthYear(user, monthYear)).thenReturn(Optional.empty());
+
+        Exception ex = assertThrows(IllegalArgumentException.class, () ->
+            service.returnCash(1L, 2000.0, 2L)
+        );
+        assertEquals("Monthly limit not found", ex.getMessage());
+    }
 }

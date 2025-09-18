@@ -50,4 +50,29 @@ public class AdvanceService {
 
         return advanceTransactionRepository.save(transaction);
     }
+
+    @Transactional
+    public AdvanceTransaction returnCash(Long userId, Double amount, Long supervisorId) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        User supervisor = userRepository.findById(supervisorId)
+            .orElseThrow(() -> new IllegalArgumentException("Supervisor not found"));
+
+        String monthYear = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM"));
+        MonthlyLimit limit = monthlyLimitRepository.findByUserAndMonthYear(user, monthYear)
+            .orElseThrow(() -> new IllegalArgumentException("Monthly limit not found"));
+
+        limit.setRemainingLimit(limit.getRemainingLimit() + amount);
+        monthlyLimitRepository.save(limit);
+
+        AdvanceTransaction transaction = AdvanceTransaction.builder()
+            .user(user)
+            .amount(amount)
+            .type(AdvanceTransaction.TransactionType.RETURN)
+            .approvedBy(supervisor)
+            .timestamp(LocalDateTime.now())
+            .build();
+
+        return advanceTransactionRepository.save(transaction);
+    }
 }

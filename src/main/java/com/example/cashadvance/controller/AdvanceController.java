@@ -50,4 +50,23 @@ public class AdvanceController {
 
         return ResponseEntity.ok(resp);
     }
+
+    @PostMapping("/returns")
+    @PreAuthorize("hasAnyRole('SUPERVISOR','ADMIN')")
+    public ResponseEntity<AdvanceResponse> returnCash(@Valid @RequestBody AdvanceRequest req,
+                                                       @RequestParam Long supervisorId) {
+        AdvanceTransaction tx = advanceService.returnCash(req.getUserId(), req.getAmount(), supervisorId);
+
+        User user = userRepository.findById(req.getUserId()).orElseThrow();
+        String monthYear = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM"));
+        MonthlyLimit limit = monthlyLimitRepository.findByUserAndMonthYear(user, monthYear).orElseThrow();
+
+        AdvanceResponse resp = AdvanceResponse.builder()
+                .transactionId(tx.getId())
+                .amount(tx.getAmount())
+                .remainingLimit(limit.getRemainingLimit())
+                .build();
+
+        return ResponseEntity.ok(resp);
+    }
 }
