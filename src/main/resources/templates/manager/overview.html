@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout('Manager Overview - CashAdvance', ~{::body})}">
+<head>
+    <title>Manager Overview</title>
+</head>
+<body>
+<div th:fragment="body">
+    <h1>Manager Overview</h1>
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+    <h3>Transactions</h3>
+    <table class="table table-sm">
+        <thead>
+            <tr><th>ID</th><th>User</th><th>Amount</th><th>Status</th><th>Created</th></tr>
+        </thead>
+        <tbody>
+            <tr th:each="tx : ${transactions}">
+                <td th:text="${tx.id}"></td>
+                <td th:text="${tx.user != null ? tx.user.username : 'n/a'}"></td>
+                <td th:text="${tx.amount}"></td>
+                <td th:text="${tx.status}"></td>
+                <td th:text="${#dates.format(tx.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Create Supervisor</h3>
+    <form th:action="@{/ui/manager/supervisors/create}" method="post" th:object="${supervisor}">
+        <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input class="form-control" th:field="*{username}" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-control" th:field="*{password}" />
+        </div>
+        <button type="submit" class="btn btn-primary">Create Supervisor</button>
+    </form>
+</div>
+</body>
+</html>

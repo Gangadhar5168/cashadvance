@@ -12,6 +12,14 @@ Start the app:
 
 App runs on http://localhost:8080 by default.
 
+Run with a local in-memory H2 DB (disables Flyway) for testing the API:
+
+```bash
+./mvnw spring-boot:run -Dspring-boot.run.arguments='--spring.profiles.active=local'
+```
+
+The application exposes REST endpoints (see "Endpoints" below). Use HTTP Basic to authenticate API requests (e.g., `-u admin:admin123`).
+
 ## Swagger UI
 
 API documentation is available at:
@@ -41,6 +49,9 @@ Import the Postman collection in `docs/postman/CashAdvance.postman_collection.js
 Variables to configure:
 - baseUrl: http://localhost:8080
 - adminUser/adminPass: seeded admin credentials (example admin/admin123)
+
+Configuration:
+Use the `application-local.yml` profile for an in-memory H2 database during development. Authentication is HTTP Basic; configure users in the database or via your test data SQL scripts.
 
 ## Example curl
 

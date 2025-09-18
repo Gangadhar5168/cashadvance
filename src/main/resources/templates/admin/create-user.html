@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout('Create User - CashAdvance', ~{::body})}">
+    <head>
+        <title>Create User - CashAdvance</title>
+    </head>
+    <body>
+        <div th:fragment="body">
+            <h1>Create User</h1>
+        <form th:action="@{/ui/admin/users/create}" th:object="${createUserRequest}" method="post">
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                <input class="form-control" th:field="*{username}" />
+                <div class="text-danger" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input type="password" class="form-control" th:field="*{password}" />
+                <div class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Salary</label>
+                <input class="form-control" th:field="*{salary}" />
+                <div class="text-danger" th:if="${#fields.hasErrors('salary')}" th:errors="*{salary}"></div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Allowance</label>
+                <input class="form-control" th:field="*{allowance}" />
+                <div class="text-danger" th:if="${#fields.hasErrors('allowance')}" th:errors="*{allowance}"></div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Roles</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" th:field="*{roles}" value="ADMIN" id="roleAdmin" />
+                    <label class="form-check-label" for="roleAdmin">ADMIN</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" th:field="*{roles}" value="MANAGER" id="roleManager" />
+                    <label class="form-check-label" for="roleManager">MANAGER</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" th:field="*{roles}" value="SUPERVISOR" id="roleSupervisor" />
+                    <label class="form-check-label" for="roleSupervisor">SUPERVISOR</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" th:field="*{roles}" value="EMPLOYEE" id="roleEmployee" />
+                    <label class="form-check-label" for="roleEmployee">EMPLOYEE</label>
+                </div>
+                <div class="text-danger" th:if="${#fields.hasErrors('roles')}" th:errors="*{roles}"></div>
+            </div>
+            <button type="submit" class="btn btn-primary">Create</button>
+        </form>
+        </div>
+    </body>
+</html>

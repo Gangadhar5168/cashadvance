@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout('User Created - CashAdvance', ~{::body})}">
+    <head>
+        <title>User Created - CashAdvance</title>
+    </head>
+    <body>
+        <div th:fragment="body">
+            <h1>User Created</h1>
+            <div class="alert alert-success">User <strong th:text="${user.username}"></strong> created successfully.</div>
+            <a class="btn btn-secondary" href="/ui/admin/users">Back to users</a>
+        </div>
+    </body>
+</html>

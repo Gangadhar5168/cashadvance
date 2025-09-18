@@ -56,9 +56,9 @@ class AdminControllerCreateUserTest {
 
         when(userService.createUserWithRoles(any(), any(), any(), any(), any())).thenReturn(created);
 
-        CreateUserRequest req = CreateUserRequest.builder()
-                .username("jane")
-                .password("plain")
+    CreateUserRequest req = CreateUserRequest.builder()
+        .username("jane")
+        .password("secret1")
                 .salary(50000.0)
                 .allowance(2000.0)
                 .roles(java.util.List.of("EMPLOYEE"))

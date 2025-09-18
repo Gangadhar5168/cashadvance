@@ -40,7 +40,8 @@ public class SecurityConfig {
                 ).permitAll()
                 .anyRequest().authenticated()
             )
-            .httpBasic(withDefaults()); // Replaced deprecated httpBasic() with withDefaults()
+            // API-only: no form login or remember-me. Keep httpBasic for API clients.
+            .httpBasic(withDefaults()); // keep httpBasic for API clients
         return http.build();
     }
 

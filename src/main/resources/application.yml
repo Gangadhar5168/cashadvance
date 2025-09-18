@@ -14,3 +14,7 @@ spring:
     name: cash-advance
 server:
   port: 8080
+
+security:
+  remember-me:
+    key: default-remember-me-key

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -46,7 +47,7 @@ public class AdminController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/users")
-    public ResponseEntity<UserResponse> createUser(@RequestBody com.example.cashadvance.dto.CreateUserRequest req) {
+    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody com.example.cashadvance.dto.CreateUserRequest req) {
         User created = userService.createUserWithRoles(req.getUsername(), req.getPassword(), req.getSalary(), req.getAllowance(), req.getRoles());
         return ResponseEntity.ok(userMapper.toResponse(created));
     }
