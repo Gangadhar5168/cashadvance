@@ -23,6 +23,10 @@ public class User {
     private Double salary;
     private Double allowance;
 
+    private String role;
+
+    private Double monthlyLimit;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "user_roles",
@@ -32,4 +36,11 @@ public class User {
     private Set<Role> roles;
 
     // getters and setters
+    public Double getMonthlyLimit() {
+        return monthlyLimit;
+    }
+
+    public void setMonthlyLimit(Double monthlyLimit) {
+        this.monthlyLimit = monthlyLimit;
+    }
 }
