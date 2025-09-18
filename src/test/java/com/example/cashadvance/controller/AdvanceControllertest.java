@@ -38,6 +38,7 @@ class AdvanceControllerTest {
     private UserRepository userRepository;
 
     @Test
+    @org.springframework.security.test.context.support.WithMockUser(username = "supervisor", roles = {"SUPERVISOR"})
     void testGiveAdvanceEndpoint() throws Exception {
         User user = User.builder().id(1L).username("employee").build();
         User supervisor = User.builder().id(2L).username("supervisor").build();
@@ -65,9 +66,10 @@ class AdvanceControllerTest {
 
         String json = "{\"userId\":1,\"amount\":2000}";
 
-        mockMvc.perform(post("/api/advances?supervisorId=2")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json))
+    mockMvc.perform(post("/api/advances?supervisorId=2")
+        .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf())
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(json))
                 .andExpect(status().isOk());
     }
 }

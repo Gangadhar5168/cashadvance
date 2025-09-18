@@ -29,6 +29,15 @@ public class AdvanceTransaction {
 
     private LocalDateTime timestamp;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private TransactionStatus status = TransactionStatus.ACTIVE;
+
+    public enum TransactionStatus {
+        ACTIVE, CANCELLED, OVERRIDDEN
+    }
+
     public enum TransactionType {
         ADVANCE, RETURN
     }
